@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import connect_database from "./config/index";
+import connect_database from "./config/database.config";
 import type { Request, Response, NextFunction } from "express";
 import errorMiddleware from "./middleware/error.middleware";
 import userRouter from "./routes/user.routes";
