@@ -8,7 +8,7 @@ const orderRouter = Router();
 orderRouter.get('/my', isLoggedInUser, getUserRentals);
 
 orderRouter.post('/', isLoggedInUser, rentCloth);
-orderRouter.put('/:clothId/return', isLoggedInUser, returnRentals);
+orderRouter.put('/return/:id', isLoggedInUser, returnRentals);
 
 
 orderRouter.get('/all', isLoggedInUser, rentalsHistory);

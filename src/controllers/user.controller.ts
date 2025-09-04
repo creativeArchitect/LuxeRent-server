@@ -29,14 +29,10 @@ export const register = async (req: Request, res: Response, next: NextFunction)=
 
         const passwordHash = await bcrypt.hash(password, 10);
 
-        console.log("hash ", passwordHash)
-
         const user = await User.create({
             firstName, lastName, email, password: passwordHash,
             avatarUrl: req.file?.filename === undefined ? '/src/public/images/avatar-img.png' : avatarPath
         })
-
-        console.log("user send: ", user)
 
         await user.save();
 

@@ -35,7 +35,9 @@ export const getCloth = async (
 ) => {
   try {
     const clothId = req.params.id;
+    console.log("clothId: ", clothId)
     const cloth = await Clothes.findById(clothId);
+    console.log("cloth: ", cloth);
 
     if (!cloth) {
       return next(new AppError("Cloth does not exist", 404));
