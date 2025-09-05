@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema<UserDocument>({
     },
     lastName: {
         type: String, 
-        minLength: [3, "Last Name having atleast 3 characters."],
         maxLength: [50, "Last Name having atmost 50 characters."],
         trim: true
     },

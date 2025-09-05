@@ -14,22 +14,23 @@ export const getUserRentals = async (
       return next(new AppError("user doesn't exits, please login", 404));
     }
 
+    console.log("user: ", user);
     const userRentals = await Order.find({ user: user._id }).populate("cloth");
 
+    console.log("user rentals: ", userRentals)
+
     if (userRentals.length === 0) {
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "No rental clothes data exits",
-          userRentals,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "No rental clothes data exits",
+        orders: userRentals,
+      });
     }
 
     res.status(200).json({
       success: true,
       message: "Rentals fetched successfully.",
-      userRentals,
+      orders: userRentals,
     });
   } catch (err) {
     console.log("Error in fetching user rentals");
@@ -90,10 +91,7 @@ export const rentCloth = async (
 
     const order = await Order.create(orderDetails);
 
-    await Clothes.findByIdAndUpdate(
-      clothId,
-      { available: false }
-    );
+    await Clothes.findByIdAndUpdate(clothId, { available: false });
 
     res.status(200).json({
       success: true,

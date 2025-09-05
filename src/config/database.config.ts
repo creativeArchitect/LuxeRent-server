@@ -17,6 +17,4 @@ async function connect_database() {
   }
 }
 
-console.log("Imported");
-
 export default connect_database;
