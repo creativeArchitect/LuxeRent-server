@@ -12,6 +12,7 @@ import orderRouter from "./routes/order.routes";
 
 import cors from "cors";  
 import helmet from "helmet";
+// import paymentRouter from "./routes/razorpay.routes";
 
 dotenv.config();
 const app = express();
@@ -27,9 +28,10 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/profile  ", profileRouter);
+app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/cloth", clothesRouter);
 app.use("/api/v1/order", orderRouter);
+// app.use("/api/v1/payment", paymentRouter);
 
 app.get("/ping", (req: Request, res: Response, next: NextFunction) => {
   res.send("PONG...");
