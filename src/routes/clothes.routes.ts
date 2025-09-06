@@ -11,8 +11,8 @@ import upload from "../middleware/upload.middleware";
 
 const clothesRouter = Router();
 
-clothesRouter.get("/all", isLoggedInUser, getAllClothes);
-clothesRouter.get("/:id", isLoggedInUser, getCloth);
+clothesRouter.get("/all", getAllClothes);
+clothesRouter.get("/:id", getCloth);
 
 // clothesRouter.post(
 //   "/",

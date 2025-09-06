@@ -24,8 +24,6 @@ export const register = async (
 
     const userExists = await User.findOne({ email: email });
 
-    console.log("user: ", userExists);
-
     if (userExists) {
       return next(new AppError("User already exits", 400));
     }
@@ -56,7 +54,6 @@ export const register = async (
     res.status(200).json({
       success: true,
       message: "user registered successfully",
-      token: token,
       user: {
         id: user._id,
         email: user.email
@@ -77,8 +74,6 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body;
-
-    console.log("req.cookies", req.cookies);
 
     if (!email || !password) {
       return next(new AppError("Please enter the required fields", 400));
@@ -102,7 +97,6 @@ export const login = async (
     res.status(200).json({
       success: true,
       message: "user loggedin successfully",
-      token: token,
       id: user._id,
       email: user.email,
     });

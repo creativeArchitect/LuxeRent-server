@@ -9,6 +9,8 @@ export const getAllClothes = async (
 ) => {
   try {
     const clothes = await Clothes.find({});
+    console.log("clothes: ", clothes);
+
     if (clothes.length === 0) {
       return res.status(200).json({
         success: true,

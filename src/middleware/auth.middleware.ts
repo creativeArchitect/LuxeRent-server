@@ -42,13 +42,7 @@ export const isLoggedInUser = async (
   next: NextFunction
 ) => {
   try {
-    // const token: string = req.cookies?.token;
-
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No or invalid auth header" });
-    }
-    const token = authHeader.split(" ")[1];
+    const token: string = req.cookies?.token;
 
     if (!token) {
       return res
