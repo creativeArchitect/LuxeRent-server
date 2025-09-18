@@ -7,7 +7,9 @@ import { getJWT, validatePassword } from "../middleware/auth.middleware";
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as 'none' | 'lax',
+  sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as
+    | "none"
+    | "lax",
   maxAge: 3 * 24 * 60 * 60 * 1000,
 };
 export const register = async (
@@ -16,7 +18,8 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
+    console.log("req.body: ", req.body);
 
     if (!firstName || !email || !password) {
       return next(new AppError("Please enter the required fields", 400));
@@ -29,7 +32,7 @@ export const register = async (
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-
+    console.log("passwordhash: ", passwordHash);
     const avatarPath: string =
       req.file?.filename !== undefined
         ? `/upload/users-data/${req.file?.filename}`
@@ -43,21 +46,26 @@ export const register = async (
       avatarUrl: avatarPath,
     });
 
+    console.log("User details: ", user);
+
     user.password = "";
 
     const token = getJWT(user._id.toString());
 
-    console.log("token in reg: ", token);
-
-    res.cookie("token", token, cookieOptions);
+    // res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
       success: true,
       message: "user registered successfully",
       user: {
         id: user._id,
-        email: user.email
-      }
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarURL: user.avatarUrl,
+        role: user.role
+      },
+      token: token,
     });
   } catch (err) {
     console.log("user registration error", err);
@@ -74,31 +82,46 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body;
+    console.log("req.body: ", req.body);
 
     if (!email || !password) {
       return next(new AppError("Please enter the required fields", 400));
     }
 
     const user = await User.findOne({ email: email }).select("+password");
+    console.log("user: ", user);
     if (!user) {
-      return next(new AppError("User doesn't exists, please register", 400));
+     return res.status(400).send({
+        success: false,
+        message: "User doesn't exists, please register"
+      });
     }
 
     const isValid = await validatePassword(password, user.password);
+
     if (!isValid) {
-      return next(new AppError("Invalid input creadentials", 400));
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials"
+      })
     }
 
     const token = getJWT(user._id.toString());
-    console.log("token in login: ", token);
 
-    res.cookie("token", token, cookieOptions);
+    // res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
       success: true,
       message: "user loggedin successfully",
-      id: user._id,
-      email: user.email,
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarURL: user.avatarUrl,
+        role: user.role
+      },
+      token: token,
     });
   } catch (err) {
     next(new AppError("Error in login, please try again later.", 500));
@@ -111,11 +134,11 @@ export const logout = async (
   next: NextFunction
 ) => {
   try {
-    res.clearCookie("token", {
-      maxAge: 0,
-      secure: true,
-      httpOnly: true,
-    });
+    // res.clearCookie("token", {
+    //   maxAge: 0,
+    //   secure: true,
+    //   httpOnly: true,
+    // });
 
     res.status(200).json({
       success: true,

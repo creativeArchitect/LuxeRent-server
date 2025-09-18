@@ -11,7 +11,7 @@ orderRouter.post('/', isLoggedInUser, rentCloth);
 orderRouter.put('/return/:id', isLoggedInUser, returnRentals);
 
 
-orderRouter.get('/all', isLoggedInUser, rentalsHistory);
+orderRouter.get('/all', rentalsHistory);
 
 export default orderRouter;
 

@@ -42,13 +42,23 @@ export const isLoggedInUser = async (
   next: NextFunction
 ) => {
   try {
-    const token: string = req.cookies?.token;
+    // const token: string = req.cookies?.token;
 
+    const token = req.headers.authorization;
     if (!token) {
       return res
         .status(401)
         .json({ message: "Authentication token not found" });
     }
+
+    // Split the "Bearer <token>" string into ["Bearer", "<token>"]
+    const tokenParts = token.split(" ");
+    if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+      return res.status(401).json({ message: "Invalid token format" });
+    }
+
+    const actualToken = tokenParts[1];
+    console.log("Token value:", actualToken);
 
     const jwtSecret = process.env.JWT_SECRET as string;
     if (!jwtSecret) {

@@ -14,7 +14,7 @@ const clothesRouter = Router();
 clothesRouter.get("/all", getAllClothes);
 clothesRouter.get("/:id", getCloth);
 
-// clothesRouter.post(
+// clothesRouter.post(  
 //   "/",
 //   isLoggedInUser,
 //   upload.array("images", 5),

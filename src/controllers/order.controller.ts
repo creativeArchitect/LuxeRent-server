@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import AppError from "../utils/error.utils";
 import Order from "../models/order.model";
 import Clothes from "../models/clothes.model";
+import User from "@/models/user.model";
 
 export const getUserRentals = async (
   req: Request,
@@ -11,7 +12,7 @@ export const getUserRentals = async (
   try {
     const user = req.user;
     if (!user) {
-      return next(new AppError("user doesn't exits, please login", 404));
+      return next(new AppError("user doesn't exits, please login", 401));
     }
 
     console.log("user: ", user);
@@ -92,7 +93,7 @@ export const rentCloth = async (
     const order = await Order.create(orderDetails);
 
     await Clothes.findByIdAndUpdate(clothId, { available: false });
-
+    
     res.status(200).json({
       success: true,
       message: "cloth fetched successfully.",
@@ -159,14 +160,14 @@ export const rentalsHistory = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return next(new AppError("user doesn't exits, please login", 404));
-    }
+    // const user = req.user;
+    // if (!user) {
+    //   return next(new AppError("user doesn't exits, please login", 404));
+    // }
 
-    if (user?.role !== "admin") {
-      return next(new AppError("Invalid action. Admin only", 403));
-    }
+    // if (user?.role !== "admin") {
+    //   return next(new AppError("Invalid action. Admin only", 403));
+    // }
 
     const clothesHistory = await Order.find({}).populate("user cloth");
     if (clothesHistory.length === 0) {

@@ -8,8 +8,8 @@ export interface ClothTypes{
     category: string 
     size: "XS" | "S" | "M" | "L" | "XL" | "XXL"
     pricePerDay: number
-    // images: [String]
-    image: String
+    // images: [string]
+    image: string
     available: Boolean
     currentRental?: ObjectId
 }

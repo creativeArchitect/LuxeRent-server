@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";  
+
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -9,17 +11,19 @@ import userRouter from "./routes/user.routes";
 import profileRouter from "./routes/profile.routes";
 import clothesRouter from "./routes/clothes.routes";
 import orderRouter from "./routes/order.routes";
-
-import cors from "cors";  
 import helmet from "helmet";
 // import paymentRouter from "./routes/razorpay.routes";
 
-dotenv.config();
 const app = express();
 
-app.use(
-  cors()
-);
+dotenv.config();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
 
 app.use(express.json());
 app.use(cookieParser());

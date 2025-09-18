@@ -8,10 +8,16 @@ export const getAllClothes = async (
   next: NextFunction
 ) => {
   try {
-    const clothes = await Clothes.find({});
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 8;
+    const skip = (page - 1) * limit;
+
+    const clothes = await Clothes.find({}).skip(skip).limit(limit).exec();
     console.log("clothes: ", clothes);
 
-    if (clothes.length === 0) {
+    const totalItems = await Clothes.countDocuments();
+
+    if (totalItems === 0) {
       return res.status(200).json({
         success: true,
         message: "No clothes exits.",
@@ -22,7 +28,10 @@ export const getAllClothes = async (
     res.status(200).json({
       success: true,
       message: "all clothes fetched successfully",
-      clothes,
+      currPage: page,
+      totalItems: totalItems,
+      totalPages: Math.ceil(totalItems/limit),
+      clothes: clothes,
     });
   } catch (err) {
     console.log("Error in getAllClothes");
@@ -202,6 +211,7 @@ export const updateCloth = async (
     console.log("Error in updateCloth");
     return next(new AppError("ERROR: " + err, 500));
   }
+  
 };
 
 export const deleteCloth = async (
