@@ -50,6 +50,11 @@ export const rentCloth = async (
       return next(new AppError("user doesn't exits, please login", 404));
     }
 
+    const { firstName, lastName, address, city, state, pincode, phone } = req.body;
+    if(!firstName || !lastName || !address || !city || !state || !pincode || !phone){
+      return next(new AppError("Enter the required fields", 400)); 
+    }
+
     const clothId = req.body.clothId;
     if (!clothId) {
       return next(new AppError("cloth is not exits", 400));
@@ -87,12 +92,19 @@ export const rentCloth = async (
       startDate: startDate,
       endDate: endDate,
       totalPrice: totalPrice,
-      status: "ongoing",
+      status: "pending",
+      shippingAddress: {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        state: state,
+        pincode: pincode,
+        phone: phone
+      }
     };
 
     const order = await Order.create(orderDetails);
-
-    await Clothes.findByIdAndUpdate(clothId, { available: false });
     
     res.status(200).json({
       success: true,

@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
 import Razorpay from "razorpay";
 import Payment from "@/models/payments.model";
+import Clothes from "@/models/clothes.model";
+import Order from "@/models/order.model";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID as string,
@@ -78,6 +80,26 @@ export const verifyOrder = async (
       },
       { new: true }
     );
+    
+    const clothId = req.body.clothId;
+    const orderId = req.body.orderId;
+    if (!clothId) {
+      return next(new AppError("invalid cloth id", 400));
+    }
+    if(!orderId){
+      return next(new AppError("invalid order id", 400));
+    }
+
+    const cloth = await Clothes.findById(clothId);
+    if (!cloth) {
+      return next(new AppError("cloth is not present", 404));
+    }
+
+    await Clothes.findByIdAndUpdate(clothId, { available: false });
+
+    await Order.findByIdAndUpdate(orderId, {
+      status: "ongoing"
+    });
 
     res.status(200).json({
       success: true,

@@ -9,6 +9,14 @@ export interface UserType {
     avatarUrl?: string
     role?: "owner" | "user"
     rentals?: [String]
+    defaultAddress?: {
+        address: String,
+        city: String,
+        state: String,
+        pincode: String,
+        country: String,
+        phone: String
+      },
 }
 
 export interface UserDocument extends UserType, Document {}
