@@ -8,16 +8,26 @@ const orderSchema = new mongoose.Schema<OrderDocument>(
       required: true,
       ref: "User",
     },
-    cloth: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Clothes",
+    clothes: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "cloth",
+      },
+      fromDate: {
+        type: Date,
+        required: true,
+      },
+      toDate: {
+        type: Date,
+        required: true,
+      },
+      totalPrice: {
+        type: Number,
+        required: true,
+      },
     },
-    startDate: {
-      type: Date,
-      required: true,
-    },
-    endDate: {
+    orderDate: {
       type: Date,
       required: true,
     },
@@ -39,44 +49,44 @@ const orderSchema = new mongoose.Schema<OrderDocument>(
         required: true,
       },
       lastName: {
-        type: String, 
+        type: String,
         maxLength: [50, "Last Name having atmost 50 characters."],
         trim: true,
-        required: true
-    },
-    address: {
-      type: String,
-      minLength: [10, "First Name having atleast 10 characters."],
-      maxLength: [100, "Last Name having atmost 100 characters."],
-      trim: true,
-      required: true
-    },
-    city: {
-      type: String,
-      minLength: [3, "First Name having atleast 10 characters."],
-      maxLength: [100, "Last Name having atmost 100 characters."],
-      trim: true,
-      required: true
-    },
-    state: {
-      type: String,
-      minLength: [3, "First Name having atleast 10 characters."],
-      maxLength: [100, "Last Name having atmost 100 characters."],
-      trim: true,
-      required: true
-    },
-    pincode: {
-      type: Number,
-      trim: true,
-      required: true
-    },
-    phone: {
-      type: Number,
-      min: [10, "First Name having atleast 10 characters."],
-      max: [10, "Last Name having atmost 10 characters."],
-      trim: true,
-      required: true
-    }
+        required: true,
+      },
+      address: {
+        type: String,
+        minLength: [10, "First Name having atleast 10 characters."],
+        maxLength: [100, "Last Name having atmost 100 characters."],
+        trim: true,
+        required: true,
+      },
+      city: {
+        type: String,
+        minLength: [3, "First Name having atleast 10 characters."],
+        maxLength: [100, "Last Name having atmost 100 characters."],
+        trim: true,
+        required: true,
+      },
+      state: {
+        type: String,
+        minLength: [3, "First Name having atleast 10 characters."],
+        maxLength: [100, "Last Name having atmost 100 characters."],
+        trim: true,
+        required: true,
+      },
+      pincode: {
+        type: Number,
+        trim: true,
+        required: true,
+      },
+      phone: {
+        type: Number,
+        min: [10, "First Name having atleast 10 characters."],
+        max: [10, "Last Name having atmost 10 characters."],
+        trim: true,
+        required: true,
+      },
     },
   },
   { timestamps: true }

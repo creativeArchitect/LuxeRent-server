@@ -117,6 +117,19 @@ export const rentCloth = async (
   }
 };
 
+export const rentClothes = async (req: Request, res: Response, next: NextFunction)=> {
+  try{
+    const user = req.user;
+
+    // const 
+
+
+  }catch(err){
+    console.log("Error in renting multiple clothes.");
+    return next(new AppError("Error in renting multiple clothes.", 500));
+  }
+}
+
 export const returnRentals = async (
   req: Request,
   res: Response,

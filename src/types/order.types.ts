@@ -3,11 +3,17 @@ import type { ObjectId } from "mongoose"
 
 export type OrderStatus = "pending" | "ongoing" | "returned" | "late" | "cancelled";
 
+export type ClothInfo = {
+  id: ObjectId
+  fromDate: Date
+  toDate: Date
+  totalPrice: Number
+}
+
 export interface OrderType {
-    user: ObjectId;
-    cloth: ObjectId;
-    startDate: Date
-    endDate: Date
+    user: ObjectId
+    clothes: ClothInfo[]
+    orderDate: Date
     totalPrice: Number
     status: OrderStatus
     shippingAddress: {
@@ -20,6 +26,7 @@ export interface OrderType {
       phone: string;
     };
 }
+
 
 
 export interface OrderDocument extends OrderType, Document{}

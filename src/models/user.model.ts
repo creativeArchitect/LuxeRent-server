@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from 'validator';
 import type { UserDocument } from "../types/user.types";
+import { CartTypes } from "@/types/cart.types";
 
 const userSchema = new mongoose.Schema<UserDocument>({
     firstName: {

@@ -1,4 +1,5 @@
 import type { ObjectId } from "mongoose"
+import { CartTypes } from "./cart.types"
 
 export interface UserType {
     id?: ObjectId
