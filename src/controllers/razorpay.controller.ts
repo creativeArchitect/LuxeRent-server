@@ -96,14 +96,14 @@ export const verifyOrder = async (
     const session = await mongoose.startSession();
     session.startTransaction();
     try{
-      clothesArr.map(async (c)=> {
+      await Promise.all(clothesArr.map(async (c)=> {
         const cloth = await Clothes.findById(c.clothId);
         if (!cloth) {
           return next(new AppError("cloth is not present", 404));
         }else{
           await Clothes.findByIdAndUpdate(c.clothId, { available: false });
         }
-      })
+      }))
   
       await Order.findByIdAndUpdate(orderId, {
         status: "ongoing"
