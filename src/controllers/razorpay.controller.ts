@@ -5,6 +5,8 @@ import Razorpay from "razorpay";
 import Payment from "@/models/payments.model";
 import Clothes from "@/models/clothes.model";
 import Order from "@/models/order.model";
+import { RentClothType } from "@/types/cloth.types";
+import mongoose from "mongoose";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID as string,
@@ -81,25 +83,39 @@ export const verifyOrder = async (
       { new: true }
     );
     
-    const clothId = req.body.clothId;
     const orderId = req.body.orderId;
-    if (!clothId) {
-      return next(new AppError("invalid cloth id", 400));
-    }
     if(!orderId){
       return next(new AppError("invalid order id", 400));
     }
 
-    const cloth = await Clothes.findById(clothId);
-    if (!cloth) {
-      return next(new AppError("cloth is not present", 404));
+    const clothesArr: RentClothType[] = req.body.clothes;
+    if(clothesArr.length <= 0){
+      return next(new AppError("No clothes found, please add clothes", 400));
     }
 
-    await Clothes.findByIdAndUpdate(clothId, { available: false });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try{
+      clothesArr.map(async (c)=> {
+        const cloth = await Clothes.findById(c.clothId);
+        if (!cloth) {
+          return next(new AppError("cloth is not present", 404));
+        }else{
+          await Clothes.findByIdAndUpdate(c.clothId, { available: false });
+        }
+      })
+  
+      await Order.findByIdAndUpdate(orderId, {
+        status: "ongoing"
+      });
 
-    await Order.findByIdAndUpdate(orderId, {
-      status: "ongoing"
-    });
+      await session.commitTransaction();
+    } catch (e) {
+      await session.abortTransaction();
+      return next(new AppError("Transaction failed", 500));
+    } finally {
+      session.endSession();
+    }
 
     res.status(200).json({
       success: true,
