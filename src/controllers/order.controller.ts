@@ -2,7 +2,13 @@ import type { Request, Response, NextFunction } from "express";
 import AppError from "../utils/error.utils";
 import Order from "../models/order.model";
 import Clothes from "../models/clothes.model";
-import User from "@/models/user.model";
+import {
+  ClothDocument,
+  ClothTypes,
+  RentClothType,
+  Size,
+} from "@/types/cloth.types";
+import { ClothInfo, OrderType } from "@/types/order.types";
 
 export const getUserRentals = async (
   req: Request,
@@ -18,7 +24,7 @@ export const getUserRentals = async (
     console.log("user: ", user);
     const userRentals = await Order.find({ user: user._id }).populate("cloth");
 
-    console.log("user rentals: ", userRentals)
+    console.log("user rentals: ", userRentals);
 
     if (userRentals.length === 0) {
       return res.status(200).json({
@@ -50,49 +56,53 @@ export const rentCloth = async (
       return next(new AppError("user doesn't exits, please login", 404));
     }
 
-    const { firstName, lastName, address, city, state, pincode, phone } = req.body;
-    if(!firstName || !lastName || !address || !city || !state || !pincode || !phone){
-      return next(new AppError("Enter the required fields", 400)); 
-    }
-
-    const clothId = req.body.clothId;
-    if (!clothId) {
+    const clothArr: RentClothType[] = req.body.clothes;
+    if (clothArr.length <= 0) {
       return next(new AppError("cloth is not exits", 400));
     }
 
-    const cloth = await Clothes.findById(clothId);
-    if (!cloth) {
-      return next(new AppError("cloth is not present", 404));
+    let allClothes: RentClothType[] = [];
+    let orderTotalPrice = 0;
+
+    for (let i = 0; i < clothArr.length; i++) {
+      const cloth = await Clothes.findById(clothArr[i]?.clothId);
+      if (!cloth) {
+        return next(new AppError("cloth is not present", 404));
+      }
+      if (cloth.available === false) {
+        return next(
+          new AppError(
+            "cloth is not available for rent, you can rent when it will available",
+            404
+          )
+        );
+      }
+      allClothes = [...allClothes, clothArr[i]];
+      orderTotalPrice += clothArr[i].totalPrice;
     }
 
-    const { startDate, endDate } = req.body;
-    if (new Date(endDate) <= new Date(startDate)) {
-      return next(new AppError("End date must be after start date", 400));
+    const { firstName, lastName, address, city, state, pincode, phone } =
+      req.body;
+    if (
+      !firstName ||
+      !lastName ||
+      !address ||
+      !city ||
+      !state ||
+      !pincode ||
+      !phone
+    ) {
+      return next(new AppError("Enter the required fields", 400));
     }
 
-    if (cloth.available === false) {
-      return next(
-        new AppError(
-          "cloth is not available for rent, you can rent when it will available",
-          404
-        )
-      );
-    }
+    const paymentType = req.body?.paymentMethod;
 
-    const days = Math.ceil(
-      (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
-
-    const totalPrice = days * cloth.pricePerDay;
-
-    const orderDetails = {
+    let orderDetails: OrderType = {
       user: user._id,
-      cloth: clothId,
-      startDate: startDate,
-      endDate: endDate,
-      totalPrice: totalPrice,
+      clothes: [...allClothes],
       status: "pending",
+      totalPrice: orderTotalPrice,
+      paymentMethod: paymentType,
       shippingAddress: {
         firstName: firstName,
         lastName: lastName,
@@ -100,12 +110,12 @@ export const rentCloth = async (
         city: city,
         state: state,
         pincode: pincode,
-        phone: phone
-      }
+        phone: phone,
+      },
     };
 
     const order = await Order.create(orderDetails);
-    
+
     res.status(200).json({
       success: true,
       message: "cloth fetched successfully.",
@@ -116,19 +126,6 @@ export const rentCloth = async (
     return next(new AppError("Error in renting clothes", 500));
   }
 };
-
-export const rentClothes = async (req: Request, res: Response, next: NextFunction)=> {
-  try{
-    const user = req.user;
-
-    // const 
-
-
-  }catch(err){
-    console.log("Error in renting multiple clothes.");
-    return next(new AppError("Error in renting multiple clothes.", 500));
-  }
-}
 
 export const returnRentals = async (
   req: Request,
@@ -185,14 +182,14 @@ export const rentalsHistory = async (
   next: NextFunction
 ) => {
   try {
-    // const user = req.user;
-    // if (!user) {
-    //   return next(new AppError("user doesn't exits, please login", 404));
-    // }
+    const user = req.user;
+    if (!user) {
+      return next(new AppError("user doesn't exits, please login", 404));
+    }
 
-    // if (user?.role !== "admin") {
-    //   return next(new AppError("Invalid action. Admin only", 403));
-    // }
+    if (user?.role !== "admin") {
+      return next(new AppError("Invalid action. Admin only", 403));
+    }
 
     const clothesHistory = await Order.find({}).populate("user cloth");
     if (clothesHistory.length === 0) {

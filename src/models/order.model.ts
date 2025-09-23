@@ -12,7 +12,7 @@ const orderSchema = new mongoose.Schema<OrderDocument>(
       id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: "cloth",
+        ref: "clothes",
       },
       fromDate: {
         type: Date,

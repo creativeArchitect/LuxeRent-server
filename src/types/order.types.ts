@@ -1,28 +1,30 @@
-import type { ObjectId } from "mongoose"
+import type { Number, ObjectId } from "mongoose"
 
 
 export type OrderStatus = "pending" | "ongoing" | "returned" | "late" | "cancelled";
 
 export type ClothInfo = {
-  id: ObjectId
+  clothId: ObjectId
   fromDate: Date
   toDate: Date
-  totalPrice: Number
+  totalPrice: number
 }
+
+type PaymentMethod = "COD" | "UPI"
 
 export interface OrderType {
     user: ObjectId
     clothes: ClothInfo[]
-    orderDate: Date
-    totalPrice: Number
+    totalPrice: number
     status: OrderStatus
+    paymentMethod: PaymentMethod
     shippingAddress: {
-      fullName: string;
+      firstName: string;
+      lastName: string;
       address: string;
       city: string;
       state: string;
       pincode: string;
-      country: string;
       phone: string;
     };
 }
