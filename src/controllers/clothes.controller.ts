@@ -13,7 +13,6 @@ export const getAllClothes = async (
     const skip = (page - 1) * limit;
 
     const clothes = await Clothes.find({}).skip(skip).limit(limit).exec();
-    console.log("clothes: ", clothes);
 
     const totalItems = await Clothes.countDocuments();
 

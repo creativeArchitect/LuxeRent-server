@@ -12,6 +12,7 @@ import profileRouter from "./routes/profile.routes";
 import clothesRouter from "./routes/clothes.routes";
 import orderRouter from "./routes/order.routes";
 import helmet from "helmet";
+import cartRouter from "./routes/cart.routes";
 // import paymentRouter from "./routes/razorpay.routes";
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/cloth", clothesRouter);
+app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/order", orderRouter);
 // app.use("/api/v1/payment", paymentRouter);
 

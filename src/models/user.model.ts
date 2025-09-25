@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema<UserDocument>({
     rentals: {
         type: [String],
         default: []
-    }
+    },
 }, { timestamps: true })
 
 

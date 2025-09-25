@@ -22,13 +22,21 @@ export const register = async (
     console.log("req.body: ", req.body);
 
     if (!firstName || !email || !password) {
-      return next(new AppError("Please enter the required fields", 400));
+      // return next(new AppError("Please enter the required fields", 400));
+      return res.status(400).json({
+        success: false,
+        message: "Please enter the required fields"
+      })
     }
 
     const userExists = await User.findOne({ email: email });
 
     if (userExists) {
-      return next(new AppError("User already exits", 400));
+      // return next(new AppError("User already exits", 400));
+      return res.status(400).json({
+        success: false,
+        message: "User already exits, Please login."
+      })
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -85,7 +93,11 @@ export const login = async (
     console.log("req.body: ", req.body);
 
     if (!email || !password) {
-      return next(new AppError("Please enter the required fields", 400));
+      // return next(new AppError("Please enter the required fields", 400));
+      return res.status(400).json({
+        success: false,
+        message: "Please enter the required fields"
+      })
     }
 
     const user = await User.findOne({ email: email }).select("+password");
