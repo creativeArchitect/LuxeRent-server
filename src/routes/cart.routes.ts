@@ -7,7 +7,7 @@ const cartRouter = Router();
 cartRouter.post('/', isLoggedInUser, saveCartItems);
 cartRouter.get('/', isLoggedInUser, getCartItems);
 // cartRouter.put('/', isLoggedInUser, updateCartItems);
-cartRouter.delete('/', isLoggedInUser, deleteCartItems);
+cartRouter.delete('/:id', isLoggedInUser, deleteCartItems);
 
 
 export default cartRouter;
